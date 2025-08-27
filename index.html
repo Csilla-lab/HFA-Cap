@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HFA-Cap Web Demo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 40px auto; }
+    input, button, textarea { padding: 10px; font-size: 16px; margin: 5px 0; width: 100%; }
+    #result { white-space: pre-wrap; margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+  <h1>HFA-Cap 前端 Demo</h1>
+  <p>在下面输入内容，发送到 Hugging Face Space 后端：</p>
+  <input id="userInput" placeholder="输入文本..." />
+  <button onclick="callApi()">提交</button>
+  <div id="result">结果会显示在这里...</div>
+
+  <script>
+    async function callApi() {
+      const input = document.getElementById('userInput').value;
+      const resultDiv = document.getElementById('result');
+      resultDiv.textContent = '加载中...';
+
+      try {
+        const response = await fetch("https://Humphreykowl-HFA-Cap.hf.space/run/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: [input] })
+        });
+        const data = await response.json();
+
+        // 假设返回结构为 { data: [...] }
+        if (data && data.data) {
+          resultDiv.textContent = data.data.join("\\n");
+        } else {
+          resultDiv.textContent = JSON.stringify(data, null, 2);
+        }
+      } catch (err) {
+        resultDiv.textContent = '错误：' + err;
+      }
+    }
+  </script>
+</body>
+</html>
